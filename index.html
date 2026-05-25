@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:          #F5F4F0;
+  --surface:     #FFFFFF;
+  --surface-2:   #FAFAF8;
+  --border:      #E8E5DF;
+  --border-med:  #D6D2CA;
+  --accent:      #111110;
+  --accent-dim:  rgba(17,17,16,.06);
+  --accent-dark: #000000;
+  --accent-glow: rgba(17,17,16,.10);
+  --tx-1:        #111110;
+  --tx-2:        #6B6560;
+  --tx-3:        #A9A49E;
+  --white:       #FFFFFF;
+  --danger:      #EF4444;
+  --danger-bg:   #FEF2F2;
+  --done-line:   #B8B3AC;
+  --sh-xs: 0 1px 2px rgba(0,0,0,.04);
+  --sh-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh-md: 0 4px 8px rgba(0,0,0,.06), 0 2px 4px rgba(0,0,0,.04);
+  --sh-lg: 0 12px 28px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.04);
+  --sh-xl: 0 20px 48px rgba(0,0,0,.12), 0 8px 16px rgba(0,0,0,.06);
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-full: 9999px;
+  --ease: cubic-bezier(.4,0,.2,1);
+  --bounce: cubic-bezier(.34,1.3,.64,1);
+  --t: 160ms;
+}
+
+[data-theme="dark"]{
+  --bg:         #111113;
+  --surface:    #1C1C1F;
+  --surface-2:  #222226;
+  --border:     #2E2E33;
+  --border-med: #3A3A40;
+  --accent:     #F4F4F5;
+  --accent-dim: rgba(244,244,245,.10);
+  --accent-dark:#FFFFFF;
+  --accent-glow:rgba(244,244,245,.12);
+  --tx-1:       #F4F4F5;
+  --tx-2:       #A1A1AA;
+  --tx-3:       #52525B;
+  --white:      #F4F4F5;
+  --danger:     #F87171;
+  --danger-bg:  rgba(248,113,113,.1);
+  --done-line:  #3F3F46;
+  --sh-xs: 0 1px 2px rgba(0,0,0,.3);
+  --sh-sm: 0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+  --sh-md: 0 4px 8px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.3);
+  --sh-lg: 0 12px 28px rgba(0,0,0,.5), 0 4px 8px rgba(0,0,0,.3);
+  --sh-xl: 0 20px 48px rgba(0,0,0,.6), 0 8px 16px rgba(0,0,0,.4);
+}
+
+html{font-size:18px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);
+  color:var(--tx-1);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:80px 60px 120px;
+  transition:background var(--t) var(--ease), color var(--t) var(--ease);
+}
+
+/* ── Layout ── */
+.wrap{width:100%;max-width:980px;animation:content-fade-in 500ms ease-out 600ms both}
+
+@keyframes content-fade-in{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ════════════════════════════════════════
+   SPLASH SCREEN — APPLE STYLE
+════════════════════════════════════════ */
+.splash{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  overflow:hidden;
+  opacity:1;
+  background:#F5F4F0;
+  transition:
+    opacity 520ms cubic-bezier(.4,0,.2,1),
+    transform 520ms cubic-bezier(.4,0,.2,1);
+}
+
+.splash.hidden{
+  opacity:0;
+  transform:scale(1.015);
+  pointer-events:none;
+}
+
+.splash-bg{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.75) 0%, rgba(255,255,255,0) 40%),
+    linear-gradient(180deg, #FAF9F6 0%, #F3F1EC 100%);
+}
+
+.splash-content{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:24px;
+  animation:splash-in 700ms cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes splash-in{
+  from{
+    opacity:0;
+    transform:translateY(14px) scale(.985);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.splash-appmark{
+  width:96px;
+  height:96px;
+  border-radius:28px;
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(255,255,255,.88);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:24px;
+  box-shadow:
+    0 16px 40px rgba(17,17,16,.06),
+    0 4px 10px rgba(17,17,16,.04),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+.splash-glyph{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  background:#111110;
+  position:relative;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 6px 18px rgba(17,17,16,.12);
+}
+
+.splash-glyph::before,
+.splash-glyph::after,
+.splash-glyph span{
+  content:'';
+  position:absolute;
+  left:13px;
+  height:3px;
+  border-radius:999px;
+  background:#FFFFFF;
+}
+
+.splash-glyph::before{
+  top:14px;
+  width:25px;
+}
+
+.splash-glyph span{
+  top:24px;
+  width:20px;
+}
+
+.splash-glyph::after{
+  top:34px;
+  width:14px;
+}
+
+.splash-title{
+  font-size:32px;
+  line-height:1.05;
+  font-weight:700;
+  letter-spacing:-0.045em;
+  color:#111110;
+  margin-bottom:8px;
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+}
+
+.splash-subtitle{
+  font-size:15px;
+  line-height:1.4;
+  font-weight:500;
+  letter-spacing:-0.01em;
+  color:#6B6560;
+  margin-bottom:22px;
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+}
+
+.splash-loader{
+  width:120px;
+  height:3px;
+  border-radius:999px;
+  background:rgba(17,17,16,.08);
+  overflow:hidden;
+}
+
+.splash-loader span{
+  display:block;
+  width:40%;
+  height:100%;
+  border-radius:inherit;
+  background:#111110;
+  animation:splash-load 1.35s cubic-bezier(.4,0,.2,1) infinite;
+}
+
+@keyframes splash-load{
+  0%{
+    transform:translateX(-120%);
+  }
+  100%{
+    transform:translateX(320%);
+  }
+}
+
+/* ── Theme toggle ── */
+.theme-btn{
+  position:fixed;top:20px;right:20px;
+  width:38px;height:38px;border-radius:var(--r-sm);
+  border:1.5px solid var(--border);
+  background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--tx-2);
+  box-shadow:var(--sh-sm);
+  transition:all var(--t) var(--ease);
+  z-index:100;
+}
+.theme-btn:hover{color:var(--tx-1);border-color:var(--border-med);box-shadow:var(--sh-md)}
+.theme-btn:active{transform:scale(.92)}
+
+/* ════════════════════════════════════════
+   HEADER
+════════════════════════════════════════ */
+.hd{margin-bottom:60px}
+
+.hd-row{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.hd h1{
+  font-size:52px;font-weight:700;
+  letter-spacing:-0.04em;line-height:1;
+  color:var(--tx-1);
+}
+
+.hd-sub{font-size:20px;color:var(--tx-2);font-weight:400}
+
+/* ── Date picker button ── */
+.date-picker-wrap{position:relative}
+
+.date-btn{
+  display:flex;align-items:center;gap:9px;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:10px 16px;
+  cursor:pointer;
+  box-shadow:var(--sh-sm);
+  transition:all var(--t) var(--ease);
+  font-family:inherit;
+}
+.date-btn:hover{border-color:var(--accent);box-shadow:var(--sh-md),0 0 0 3px var(--accent-glow)}
+.date-btn.open{border-color:var(--accent);box-shadow:var(--sh-md),0 0 0 3px var(--accent-glow)}
+
+.date-btn-icon{color:var(--accent);flex-shrink:0}
+.date-btn-label{
+  font-size:13.5px;font-weight:600;
+  color:var(--tx-1);letter-spacing:.01em;
+  white-space:nowrap;
+}
+.date-btn-badge{
+  font-size:11px;font-weight:600;
+  background:var(--accent-dim);
+  color:var(--accent);
+  border-radius:var(--r-full);
+  padding:2px 8px;
+  letter-spacing:.02em;
+}
+.date-btn-chevron{
+  color:var(--tx-3);flex-shrink:0;
+  transition:transform var(--t) var(--ease);
+}
+.date-btn.open .date-btn-chevron{transform:rotate(180deg)}
+
+/* ════════════════════════════════════════
+   CALENDAR POPOVER
+════════════════════════════════════════ */
+.cal-popover{
+  position:absolute;
+  top:calc(100% + 10px);
+  right:0;
+  width:320px;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-xl);
+  box-shadow:var(--sh-xl);
+  padding:20px;
+  z-index:500;
+  transform-origin:top right;
+
+  /* hidden state */
+  opacity:0;
+  transform:scale(.94) translateY(-6px);
+  pointer-events:none;
+  transition:opacity 180ms var(--ease), transform 180ms var(--bounce);
+}
+.cal-popover.visible{
+  opacity:1;
+  transform:scale(1) translateY(0);
+  pointer-events:auto;
+}
+
+/* nav */
+.cal-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.cal-nav-btn{
+  width:30px;height:30px;border-radius:var(--r-sm);
+  border:none;background:transparent;
+  cursor:pointer;color:var(--tx-2);
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--t) var(--ease);
+}
+.cal-nav-btn:hover{background:var(--surface-2);color:var(--tx-1)}
+.cal-month-label{font-size:15px;font-weight:600;color:var(--tx-1)}
+
+/* weekdays */
+.cal-wdays{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  margin-bottom:6px;
+}
+.cal-wday{
+  text-align:center;font-size:10.5px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;
+  color:var(--tx-3);padding:4px 0;
+}
+
+/* grid */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+
+.cal-day{
+  height:36px;border-radius:var(--r-sm);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  cursor:pointer;
+  font-size:13px;font-weight:500;
+  color:var(--tx-1);
+  transition:all var(--t) var(--ease);
+  position:relative;user-select:none;
+}
+.cal-day:hover:not(.selected){background:var(--surface-2)}
+.cal-day.other-month{color:var(--tx-3)}
+.cal-day.today:not(.selected){
+  font-weight:700;color:var(--accent);
+  box-shadow:0 0 0 1.5px var(--accent);
+}
+.cal-day.selected{
+  background:var(--accent);color:#fff;
+  font-weight:600;
+  box-shadow:0 2px 8px var(--accent-glow);
+}
+.cal-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--accent);
+  position:absolute;bottom:3px;
+}
+.cal-day.selected .cal-dot{background:rgba(255,255,255,.75)}
+
+/* today shortcut */
+.cal-footer{
+  margin-top:14px;padding-top:14px;
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.cal-today-btn{
+  font-family:inherit;font-size:12.5px;font-weight:600;
+  color:var(--accent);background:var(--accent-dim);
+  border:none;border-radius:var(--r-sm);
+  padding:6px 12px;cursor:pointer;
+  transition:all var(--t) var(--ease);
+}
+.cal-today-btn:hover{background:var(--accent);color:#fff}
+.cal-sel-label{font-size:12px;color:var(--tx-3)}
+
+/* progress */
+.prog{margin-top:22px}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.prog-label{font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--tx-3)}
+.prog-frac{font-size:12px;font-weight:600;color:var(--accent)}
+.prog-track{height:3px;background:var(--border);border-radius:var(--r-full);overflow:hidden}
+.prog-fill{
+  height:100%;background:linear-gradient(90deg,var(--accent) 0%,#818CF8 100%);
+  border-radius:var(--r-full);width:0%;transition:width 380ms var(--ease);
+}
+
+
+/* ════════════════════════════════════════
+   CALENDAR-FIRST PLANNER
+════════════════════════════════════════ */
+.planner{
+  margin-top:28px;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:28px;
+  padding:22px;
+  box-shadow:var(--sh-md);
+}
+
+.planner-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.planner-title{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.planner-kicker{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--tx-3);
+}
+
+.planner-month{
+  font-size:24px;
+  font-weight:700;
+  letter-spacing:-.04em;
+  color:var(--tx-1);
+}
+
+.planner-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.planner-nav,
+.planner-today{
+  height:38px;
+  border:none;
+  border-radius:13px;
+  background:var(--surface-2);
+  color:var(--tx-2);
+  font-family:inherit;
+  font-size:13px;
+  font-weight:650;
+  cursor:pointer;
+  transition:all var(--t) var(--ease);
+}
+
+.planner-nav{
+  width:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.planner-today{
+  padding:0 14px;
+}
+
+.planner-nav:hover,
+.planner-today:hover{
+  color:var(--tx-1);
+  background:var(--accent-dim);
+}
+
+.planner-weekdays{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+  margin-bottom:8px;
+}
+
+.planner-weekdays span{
+  text-align:center;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--tx-3);
+  padding:4px 0;
+}
+
+.planner-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+
+.plan-day{
+  min-height:82px;
+  border-radius:18px;
+  border:1.5px solid transparent;
+  background:var(--surface-2);
+  padding:10px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:all var(--t) var(--ease);
+  position:relative;
+  overflow:hidden;
+}
+
+.plan-day:hover{
+  border-color:var(--border-med);
+  transform:translateY(-1px);
+}
+
+.plan-day.other{
+  opacity:.38;
+}
+
+.plan-day.past{
+  background:transparent;
+  border-color:var(--border);
+}
+
+.plan-day.today{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-glow);
+}
+
+.plan-day.selected{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+  box-shadow:0 12px 24px rgba(79,70,229,.22);
+}
+
+.plan-day-num{
+  font-size:14px;
+  font-weight:700;
+  color:var(--tx-1);
+}
+
+.plan-day.selected .plan-day-num{
+  color:#fff;
+}
+
+.plan-day-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.plan-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:22px;
+  height:22px;
+  padding:0 7px;
+  border-radius:999px;
+  background:var(--accent-dim);
+  color:var(--accent);
+  font-size:11px;
+  font-weight:800;
+}
+
+.plan-day.selected .plan-count{
+  background:rgba(255,255,255,.22);
+  color:#fff;
+}
+
+.plan-label{
+  font-size:10.5px;
+  font-weight:650;
+  color:var(--tx-3);
+  white-space:nowrap;
+}
+
+.plan-day.selected .plan-label{
+  color:rgba(255,255,255,.8);
+}
+
+.plan-day.past .plan-label::before{
+  content:'View';
+}
+
+.plan-day:not(.past) .plan-label::before{
+  content:'Plan';
+}
+
+.input-lock{
+  display:none;
+  align-items:center;
+  gap:8px;
+  margin:-8px 0 16px;
+  padding:12px 14px;
+  border-radius:var(--r-md);
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--tx-2);
+  font-size:13px;
+  font-weight:550;
+}
+
+.input-lock.visible{
+  display:flex;
+}
+
+.input-card.locked{
+  opacity:.58;
+  pointer-events:none;
+}
+
+.input-card.locked .ti::placeholder{
+  color:var(--tx-3);
+}
+
+@media(max-width:600px){
+  .planner{
+    margin-top:22px;
+    padding:16px;
+    border-radius:22px;
+  }
+
+  .planner-head{
+    align-items:flex-start;
+  }
+
+  .planner-month{
+    font-size:20px;
+  }
+
+  .planner-grid,
+  .planner-weekdays{
+    gap:4px;
+  }
+
+  .plan-day{
+    min-height:64px;
+    border-radius:14px;
+    padding:8px;
+  }
+
+  .plan-label{
+    display:none;
+  }
+
+  .plan-count{
+    min-width:18px;
+    height:18px;
+    padding:0 5px;
+    font-size:10px;
+  }
+}
+
+/* ── Input card ── */
+.input-card{
+  display:flex;align-items:center;gap:16px;
+  background:var(--surface);border-radius:var(--r-lg);
+  border:1.5px solid transparent;box-shadow:var(--sh-md);
+  padding:12px 12px 12px 28px;margin-bottom:24px;
+  transition:border-color var(--t) var(--ease), box-shadow var(--t) var(--ease);
+}
+.input-card:focus-within{
+  border-color:var(--accent);
+  box-shadow:var(--sh-lg), 0 0 0 4px var(--accent-glow);
+}
+.ic-plus{flex-shrink:0;color:var(--tx-3);transition:color var(--t) var(--ease)}
+.input-card:focus-within .ic-plus{color:var(--accent)}
+.ti{
+  flex:1;border:none;outline:none;background:transparent;
+  font-family:inherit;font-size:18px;font-weight:400;
+  color:var(--tx-1);padding:18px 0;caret-color:var(--accent);
+}
+.ti::placeholder{color:var(--tx-3)}
+.btn-add{
+  flex-shrink:0;background:var(--accent);color:var(--white);
+  border:none;border-radius:var(--r-md);padding:16px 36px;
+  font-family:inherit;font-size:16px;font-weight:600;letter-spacing:-0.01em;
+  cursor:pointer;box-shadow:0 2px 8px rgba(79,70,229,.25);
+  transition:background var(--t) var(--ease), box-shadow var(--t) var(--ease), transform 80ms var(--ease);
+}
+.btn-add:hover{background:var(--accent-dark);box-shadow:0 4px 14px rgba(79,70,229,.35)}
+.btn-add:active{transform:scale(.96)}
+
+/* ── List ── */
+.list{display:flex;flex-direction:column;gap:8px}
+
+/* ── Item ── */
+.item{
+  position:relative;display:flex;align-items:center;gap:20px;
+  background:var(--surface);border-radius:var(--r-md);
+  border:1.5px solid transparent;padding:0 20px 0 28px;
+  transition:border-color var(--t) var(--ease), box-shadow var(--t) var(--ease);
+  animation:drop 180ms var(--ease) both;
+  min-height:80px;
+}
+@keyframes drop{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.item:hover{border-color:var(--border);box-shadow:var(--sh-sm)}
+.item.done{background:var(--surface-2)}
+.item.bye{animation:bye 180ms var(--ease) both!important}
+@keyframes bye{
+  from{opacity:1;transform:translateX(0);max-height:80px;margin-bottom:0}
+  to{opacity:0;transform:translateX(12px);max-height:0;margin-bottom:-8px}
+}
+
+/* checkbox */
+.cb-wrap{flex-shrink:0;position:relative;width:22px;height:22px}
+.cb-wrap input{position:absolute;opacity:0;width:0;height:0}
+.cb-face{
+  position:absolute;inset:0;border:2px solid var(--border-med);
+  border-radius:6px;background:var(--surface);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--t) var(--ease);
+}
+.cb-wrap:hover .cb-face{border-color:var(--accent);background:var(--accent-dim)}
+.cb-wrap input:checked + .cb-face{background:var(--accent);border-color:var(--accent);box-shadow:0 2px 6px rgba(79,70,229,.3)}
+.cb-wrap input:checked + .cb-face::after{
+  content:'';display:block;width:5px;height:9px;
+  border:2px solid #fff;border-top:none;border-left:none;
+  transform:rotate(45deg) translate(0,-1px);
+}
+.cb-wrap input:focus-visible + .cb-face{outline:2px solid var(--accent);outline-offset:2px}
+
+/* text */
+.tx{
+  flex:1;font-size:20px;font-weight:500;color:var(--tx-1);
+  padding:26px 0;line-height:1.6;word-break:break-word;
+  transition:color var(--t) var(--ease), text-decoration-color var(--t) var(--ease);
+  cursor:pointer;
+}
+.item.done .tx{color:var(--tx-3);text-decoration:line-through;text-decoration-color:var(--done-line)}
+
+/* edit input */
+.edit-input{
+  flex:1;border:none;outline:none;background:transparent;
+  font-family:inherit;font-size:20px;font-weight:500;color:var(--tx-1);
+  padding:26px 0;line-height:1.6;caret-color:var(--accent);min-width:0;
+}
+
+/* item actions */
+.item-actions{display:flex;align-items:center;gap:8px;opacity:0;transition:opacity var(--t) var(--ease)}
+.item:hover .item-actions,.item.editing .item-actions{opacity:1}
+.act-btn{
+  flex-shrink:0;border:none;background:transparent;
+  width:42px;height:42px;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--tx-3);transition:all var(--t) var(--ease);
+}
+.act-btn.edit:hover{background:var(--accent-dim);color:var(--accent)}
+.act-btn.del:hover{background:var(--danger-bg);color:var(--danger)}
+.act-btn.save:hover{background:var(--accent-dim);color:var(--accent)}
+.act-btn.cancel:hover{background:var(--danger-bg);color:var(--danger)}
+
+/* ── Divider ── */
+.divider{display:flex;align-items:center;gap:12px;margin:12px 0 6px}
+.divider-line{flex:1;height:1px;background:var(--border)}
+.divider-tag{font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tx-3)}
+
+/* ── Footer ── */
+.ft{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding:0 4px}
+.ft-left{font-size:15px;color:var(--tx-3)}
+.ft-left b{font-weight:600;color:var(--tx-2)}
+.btn-clear{
+  font-family:inherit;font-size:15px;font-weight:500;
+  color:var(--tx-3);background:transparent;border:none;
+  padding:5px 10px;border-radius:var(--r-sm);cursor:pointer;
+  transition:all var(--t) var(--ease);
+}
+.btn-clear:hover:not(:disabled){color:var(--danger);background:var(--danger-bg)}
+.btn-clear:disabled{opacity:.35;cursor:default}
+
+/* ── Empty ── */
+.empty{
+  text-align:center;padding:64px 32px;
+  background:var(--surface);border-radius:var(--r-lg);
+  animation:drop 220ms var(--ease) both;
+}
+.empty-icon{width:44px;height:44px;margin:0 auto 16px;color:var(--tx-3);opacity:.45}
+.empty-h{font-size:17px;font-weight:600;color:var(--tx-2);letter-spacing:-0.01em;margin-bottom:6px}
+.empty-p{font-size:15px;color:var(--tx-3);line-height:1.55}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media(max-width:600px){
+  body{padding:48px 16px 80px}
+  .splash-appmark{
+    width:84px;
+    height:84px;
+    border-radius:24px;
+  }
+
+  .splash-glyph{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+  }
+
+  .splash-glyph::before{top:12px;width:22px;left:12px}
+  .splash-glyph span{top:21px;width:18px;left:12px}
+  .splash-glyph::after{top:30px;width:12px;left:12px}
+
+  .splash-title{
+    font-size:27px;
+  }
+
+  .splash-subtitle{
+    font-size:14px;
+  }
+  
+  .hd{margin-bottom:36px}
+  .hd h1{font-size:32px}
+  .hd-sub{font-size:16px}
+  .date-btn-badge{display:none}
+  .cal-popover{width:calc(100vw - 32px);right:auto;left:50%;transform-origin:top center;
+    transform:translateX(-50%) scale(.94) translateY(-6px)}
+  .cal-popover.visible{transform:translateX(-50%) scale(1) translateY(0)}
+  .input-card{padding:8px 8px 8px 18px;gap:10px;margin-bottom:16px}
+  .ti{font-size:16px;padding:14px 0}
+  .btn-add{padding:12px 22px;font-size:14px}
+  .item{padding:0 12px 0 16px;gap:14px;min-height:72px}
+  .tx,.edit-input{font-size:18px;padding:20px 0}
+  .item-actions{opacity:1}
+  .act-btn{width:38px;height:38px}
+  .empty{padding:48px 20px}
+}
+
+@media(min-width:601px) and (max-width:1024px){
+  body{padding:60px 32px 100px}
+  .hd h1{font-size:40px}
+  .hd-sub{font-size:18px}
+}
+
+@media(min-width:1025px){
+  body{padding:80px 60px 120px}
+}
+
+
+/* ════════════════════════════════════════
+   APPLE-LIKE BLACK CALENDAR UI OVERRIDE
+════════════════════════════════════════ */
+body{
+  background:
+    radial-gradient(circle at 50% -10%, rgba(255,255,255,.95), transparent 36%),
+    linear-gradient(180deg,#FAF9F6 0%,#F3F1EC 100%);
+}
+.wrap{max-width:1160px}
+.hd{margin-bottom:28px}
+.hd-row{align-items:flex-end}
+.hd h1{font-size:58px;font-weight:760;letter-spacing:-.06em}
+.hd-sub{font-size:18px;margin-top:6px;color:var(--tx-2)}
+.date-picker-wrap{display:none}
+.theme-btn{border-radius:14px;background:rgba(255,255,255,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+.planner-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.18fr) minmax(360px,.82fr);
+  gap:22px;
+  align-items:start;
+}
+
+.planner,
+.day-panel{
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.86);
+  border-radius:34px;
+  box-shadow:
+    0 24px 54px rgba(17,17,16,.07),
+    0 8px 18px rgba(17,17,16,.04),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+
+.planner{margin-top:0;padding:24px}
+.day-panel{padding:24px;position:sticky;top:80px}
+
+.planner-head{margin-bottom:22px}
+.planner-kicker,.panel-kicker{
+  font-size:11px;font-weight:760;letter-spacing:.14em;text-transform:uppercase;color:var(--tx-3)
+}
+.planner-month{font-size:30px;font-weight:760;letter-spacing:-.055em}
+.planner-actions{gap:9px}
+.planner-nav,.planner-today{
+  height:42px;border-radius:15px;background:#111110;color:#fff;border:1px solid #111110;
+  box-shadow:0 10px 22px rgba(17,17,16,.12);font-weight:700
+}
+.planner-nav{width:42px}.planner-today{padding:0 17px}
+.planner-nav:hover,.planner-today:hover{background:#000;color:#fff;transform:translateY(-1px)}
+
+.planner-weekdays{gap:8px;margin-bottom:10px}
+.planner-weekdays span{font-size:11px;color:#A09A93}
+.planner-grid{gap:8px}
+.plan-day{
+  min-height:92px;
+  border-radius:22px;
+  background:#FAF9F7;
+  border:1px solid #ECE8E1;
+  padding:12px;
+  box-shadow:none;
+}
+.plan-day:hover{border-color:#D8D3CB;background:#fff;transform:translateY(-2px);box-shadow:0 10px 20px rgba(17,17,16,.055)}
+.plan-day.other{opacity:.32}
+.plan-day.past{background:#F3F1EC;color:#A9A49E}
+.plan-day.today:not(.selected){border-color:#111110;box-shadow:0 0 0 3px rgba(17,17,16,.07);background:#fff}
+.plan-day.selected{
+  background:#111110;
+  border-color:#111110;
+  color:#fff;
+  box-shadow:0 18px 34px rgba(17,17,16,.18)
+}
+.plan-day-num{font-size:15px;font-weight:760}.plan-day.selected .plan-day-num{color:#fff}
+.plan-count{background:#111110;color:#fff;min-width:24px;height:24px}
+.plan-day.selected .plan-count{background:#fff;color:#111110}
+.plan-label{font-size:10.5px;color:#A29C95}.plan-day.selected .plan-label{color:rgba(255,255,255,.72)}
+
+.day-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}
+.day-panel-head h2{font-size:30px;line-height:1.08;font-weight:760;letter-spacing:-.055em;color:var(--tx-1);margin-top:4px}
+.panel-pill{display:inline-flex;align-items:center;height:30px;padding:0 12px;border-radius:999px;background:#111110;color:#fff;font-size:12px;font-weight:740;white-space:nowrap}
+.prog{margin:0 0 20px}.prog-fill{background:#111110}.prog-frac{color:#111110}
+.input-lock{margin:0 0 14px;background:#F7F5F0;border-color:#E9E4DC;border-radius:16px}
+.input-card{box-shadow:none;border:1px solid #E9E4DC;border-radius:20px;padding:10px 10px 10px 18px;margin-bottom:18px;background:#FAF9F7}
+.input-card:focus-within{border-color:#111110;box-shadow:0 0 0 4px rgba(17,17,16,.06);background:#fff}.input-card:focus-within .ic-plus{color:#111110}
+.btn-add{background:#111110;color:#fff;border-radius:16px;box-shadow:0 10px 22px rgba(17,17,16,.12);padding:15px 28px}.btn-add:hover{background:#000;box-shadow:0 14px 28px rgba(17,17,16,.16)}
+.list{gap:10px}.item{border:1px solid #ECE8E1;border-radius:20px;background:#fff;min-height:72px;padding:0 16px 0 18px}.item:hover{border-color:#DCD7D0;box-shadow:0 10px 18px rgba(17,17,16,.045)}.item.done{background:#FAF9F7}
+.tx{font-size:17px;padding:22px 0}.edit-input{font-size:17px;padding:22px 0}.cb-wrap input:checked + .cb-face{background:#111110;border-color:#111110;box-shadow:0 2px 6px rgba(17,17,16,.20)}.cb-wrap:hover .cb-face{border-color:#111110;background:rgba(17,17,16,.04)}
+.ft{margin-top:18px}.empty{border-radius:22px;background:#FAF9F7}
+[data-theme="dark"] body{background:linear-gradient(180deg,#111113 0%,#18181B 100%)}
+[data-theme="dark"] .planner,[data-theme="dark"] .day-panel{background:rgba(28,28,31,.82);border-color:rgba(255,255,255,.08)}
+[data-theme="dark"] .plan-day{background:#222226;border-color:#2E2E33}[data-theme="dark"] .plan-day.selected{background:#F4F4F5;color:#111113;border-color:#F4F4F5}[data-theme="dark"] .plan-day.selected .plan-day-num{color:#111113}[data-theme="dark"] .plan-day.selected .plan-count{background:#111113;color:#fff}[data-theme="dark"] .planner-nav,[data-theme="dark"] .planner-today,[data-theme="dark"] .btn-add,[data-theme="dark"] .panel-pill{background:#F4F4F5;color:#111113;border-color:#F4F4F5}
+
+@media(max-width:900px){
+  body{padding:56px 18px 80px}.hd h1{font-size:40px}.planner-layout{grid-template-columns:1fr}.day-panel{position:static}.plan-day{min-height:76px;border-radius:18px}.planner,.day-panel{border-radius:28px;padding:18px}
+}
+@media(max-width:600px){
+  .planner{padding:16px}.planner-head{align-items:center}.planner-month{font-size:22px}.planner-nav,.planner-today{height:38px}.planner-nav{width:38px}.plan-day{min-height:62px;padding:8px;border-radius:14px}.plan-day-num{font-size:13px}.panel-pill{display:none}.day-panel-head h2{font-size:25px}.input-card{padding:8px 8px 8px 14px}.btn-add{padding:12px 20px}
+}
+
+
+
+/* ════════════════════════════════════════
+   FINAL BALANCED DESKTOP LAYOUT
+   keeps calendar + tasks visible without page scrolling
+════════════════════════════════════════ */
+@media (min-width:901px){
+  body{
+    min-height:100vh;
+    padding:44px 56px 36px;
+    overflow:hidden;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:1220px;
+    min-height:calc(100vh - 80px);
+    display:flex;
+    flex-direction:column;
+  }
+
+  .hd{
+    margin-bottom:22px;
+    flex-shrink:0;
+  }
+
+  .hd h1{
+    font-size:50px;
+    line-height:.96;
+  }
+
+  .hd-sub{
+    font-size:16px;
+    margin-top:8px;
+  }
+
+  .planner-layout{
+    flex:1;
+    display:grid;
+    grid-template-columns:minmax(430px,.92fr) minmax(500px,1.08fr);
+    gap:22px;
+    align-items:stretch;
+    min-height:0;
+  }
+
+  .planner,
+  .day-panel{
+    border-radius:32px;
+    min-height:0;
+    height:100%;
+  }
+
+  .planner{
+    padding:20px;
+  }
+
+  .day-panel{
+    position:static;
+    top:auto;
+    padding:24px 26px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .planner-head{
+    margin-bottom:16px;
+  }
+
+  .planner-month{
+    font-size:27px;
+  }
+
+  .planner-nav,
+  .planner-today{
+    height:39px;
+    border-radius:14px;
+  }
+
+  .planner-nav{
+    width:39px;
+  }
+
+  .planner-today{
+    padding:0 16px;
+  }
+
+  .planner-weekdays{
+    gap:6px;
+    margin-bottom:8px;
+  }
+
+  .planner-grid{
+    gap:6px;
+  }
+
+  .plan-day{
+    min-height:68px;
+    border-radius:18px;
+    padding:9px 10px;
+  }
+
+  .plan-day-num{
+    font-size:14px;
+  }
+
+  .plan-count{
+    min-width:21px;
+    height:21px;
+    font-size:10px;
+  }
+
+  .plan-label{
+    font-size:9.5px;
+  }
+
+  .day-panel-head{
+    margin-bottom:18px;
+    flex-shrink:0;
+  }
+
+  .day-panel-head h2{
+    font-size:29px;
+  }
+
+  .input-lock{
+    margin:0 0 12px;
+    flex-shrink:0;
+  }
+
+  .input-card{
+    margin-bottom:18px;
+    flex-shrink:0;
+  }
+
+  .btn-add,
+  .planner-nav,
+  .planner-today,
+  .panel-pill{
+    background:#111110;
+    color:#fff;
+    border-color:#111110;
+  }
+
+  .input-card.locked .btn-add{
+    background:#111110;
+    color:#fff;
+    opacity:.48;
+  }
+
+  .list{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    padding-right:2px;
+  }
+
+  .empty{
+    min-height:260px;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .ft{
+    margin-top:16px;
+    flex-shrink:0;
+  }
+}
+
+
+
+/* ════════════════════════════════════════
+   FINAL UX FIX — SCROLLING TASKS + APPLE DARK MODE
+   Counts shown on calendar = remaining unfinished tasks only
+════════════════════════════════════════ */
+
+/* Cleaner Apple-like dark mode: neutral, not gold */
+[data-theme="dark"]{
+  --bg:#0F0F10;
+  --surface:#1C1C1E;
+  --surface-2:#2C2C2E;
+  --border:#3A3A3C;
+  --border-med:#48484A;
+  --accent:#F5F5F7;
+  --accent-dim:rgba(245,245,247,.10);
+  --accent-dark:#FFFFFF;
+  --accent-glow:rgba(245,245,247,.13);
+  --tx-1:#F5F5F7;
+  --tx-2:#C7C7CC;
+  --tx-3:#8E8E93;
+  --white:#111110;
+  --danger:#FF6B5F;
+  --danger-bg:rgba(255,107,95,.13);
+  --done-line:#636366;
+}
+
+[data-theme="dark"] body{
+  background:
+    radial-gradient(circle at 50% -16%, rgba(255,255,255,.07), transparent 36%),
+    linear-gradient(180deg,#0F0F10 0%,#161617 100%) !important;
+}
+
+[data-theme="dark"] .theme-btn,
+[data-theme="dark"] .planner,
+[data-theme="dark"] .day-panel{
+  background:rgba(28,28,30,.86) !important;
+  border-color:rgba(255,255,255,.09) !important;
+  box-shadow:
+    0 24px 54px rgba(0,0,0,.38),
+    inset 0 1px 0 rgba(255,255,255,.045) !important;
+}
+
+[data-theme="dark"] .plan-day{
+  background:#242426 !important;
+  border-color:#343437 !important;
+  color:#F5F5F7 !important;
+}
+
+[data-theme="dark"] .plan-day:hover{
+  background:#2C2C2E !important;
+  border-color:#48484A !important;
+}
+
+[data-theme="dark"] .plan-day.past{
+  background:#1B1B1D !important;
+  color:#8E8E93 !important;
+  opacity:.78;
+}
+
+[data-theme="dark"] .plan-day.other{
+  opacity:.30;
+}
+
+[data-theme="dark"] .plan-day.today:not(.selected){
+  border-color:#F5F5F7 !important;
+  box-shadow:0 0 0 3px rgba(245,245,247,.10) !important;
+}
+
+[data-theme="dark"] .plan-day.selected{
+  background:#F5F5F7 !important;
+  color:#111110 !important;
+  border-color:#F5F5F7 !important;
+  box-shadow:0 18px 34px rgba(0,0,0,.42) !important;
+}
+
+[data-theme="dark"] .plan-day.selected .plan-day-num,
+[data-theme="dark"] .plan-day.selected .plan-label{
+  color:#111110 !important;
+}
+
+[data-theme="dark"] .plan-count{
+  background:rgba(245,245,247,.13) !important;
+  color:#F5F5F7 !important;
+}
+
+[data-theme="dark"] .plan-day.selected .plan-count{
+  background:#111110 !important;
+  color:#FFFFFF !important;
+}
+
+[data-theme="dark"] .planner-nav,
+[data-theme="dark"] .planner-today,
+[data-theme="dark"] .btn-add,
+[data-theme="dark"] .panel-pill{
+  background:#F5F5F7 !important;
+  color:#111110 !important;
+  border-color:#F5F5F7 !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.38) !important;
+}
+
+[data-theme="dark"] .planner-nav:hover,
+[data-theme="dark"] .planner-today:hover,
+[data-theme="dark"] .btn-add:hover{
+  background:#FFFFFF !important;
+  color:#000000 !important;
+}
+
+[data-theme="dark"] .input-lock{
+  background:#242426 !important;
+  border-color:#343437 !important;
+  color:#C7C7CC !important;
+}
+
+[data-theme="dark"] .input-card{
+  background:#242426 !important;
+  border-color:#343437 !important;
+  box-shadow:none !important;
+}
+
+[data-theme="dark"] .input-card:focus-within{
+  background:#2C2C2E !important;
+  border-color:#F5F5F7 !important;
+  box-shadow:0 0 0 4px rgba(245,245,247,.10) !important;
+}
+
+[data-theme="dark"] .ti,
+[data-theme="dark"] .edit-input{
+  color:#F5F5F7 !important;
+  -webkit-text-fill-color:#F5F5F7 !important;
+}
+
+[data-theme="dark"] .ti::placeholder{
+  color:#8E8E93 !important;
+  -webkit-text-fill-color:#8E8E93 !important;
+}
+
+[data-theme="dark"] .ti:disabled{
+  color:#8E8E93 !important;
+  -webkit-text-fill-color:#8E8E93 !important;
+  opacity:1;
+}
+
+[data-theme="dark"] .item,
+[data-theme="dark"] .empty{
+  background:#242426 !important;
+  border-color:#343437 !important;
+}
+
+[data-theme="dark"] .item:hover{
+  border-color:#48484A !important;
+  box-shadow:none !important;
+}
+
+[data-theme="dark"] .item.done{
+  background:#1C1C1E !important;
+}
+
+[data-theme="dark"] .tx{
+  color:#F5F5F7 !important;
+}
+
+[data-theme="dark"] .item.done .tx{
+  color:#8E8E93 !important;
+}
+
+[data-theme="dark"] .cb-face{
+  background:#1C1C1E !important;
+  border-color:#5A5A5F !important;
+}
+
+[data-theme="dark"] .cb-wrap input:checked + .cb-face{
+  background:#F5F5F7 !important;
+  border-color:#F5F5F7 !important;
+  box-shadow:none !important;
+}
+
+[data-theme="dark"] .cb-wrap input:checked + .cb-face::after{
+  border-color:#111110 !important;
+}
+
+[data-theme="dark"] .prog-track{
+  background:#343437 !important;
+}
+
+[data-theme="dark"] .prog-fill{
+  background:#F5F5F7 !important;
+}
+
+[data-theme="dark"] .prog-frac{
+  color:#F5F5F7 !important;
+}
+
+[data-theme="dark"] .divider-line,
+[data-theme="dark"] .ft{
+  border-color:#343437 !important;
+}
+
+/* Keep page fixed on desktop, but make only task list scroll internally */
+@media (min-width:901px){
+  body{
+    height:100vh !important;
+    min-height:100vh !important;
+    overflow:hidden !important;
+  }
+
+  .wrap{
+    height:calc(100vh - 80px) !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  .planner-layout{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    overflow:hidden !important;
+    align-items:stretch !important;
+  }
+
+  .planner{
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+
+  .day-panel{
+    height:100% !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+    display:flex !important;
+    flex-direction:column !important;
+  }
+
+  .day-panel-head,
+  .prog,
+  .input-lock,
+  .input-card,
+  .ft{
+    flex:0 0 auto !important;
+  }
+
+  .day-panel .list,
+  #list{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    padding-right:8px !important;
+    padding-bottom:12px !important;
+    overscroll-behavior:contain;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(17,17,16,.24) transparent;
+  }
+
+  .day-panel .list::-webkit-scrollbar,
+  #list::-webkit-scrollbar{
+    width:7px;
+  }
+
+  .day-panel .list::-webkit-scrollbar-track,
+  #list::-webkit-scrollbar-track{
+    background:transparent;
+  }
+
+  .day-panel .list::-webkit-scrollbar-thumb,
+  #list::-webkit-scrollbar-thumb{
+    background:rgba(17,17,16,.22);
+    border-radius:999px;
+  }
+
+  [data-theme="dark"] .day-panel .list,
+  [data-theme="dark"] #list{
+    scrollbar-color:rgba(245,245,247,.28) transparent;
+  }
+
+  [data-theme="dark"] .day-panel .list::-webkit-scrollbar-thumb,
+  [data-theme="dark"] #list::-webkit-scrollbar-thumb{
+    background:rgba(245,245,247,.26);
+  }
+
+  .item{
+    flex-shrink:0;
+  }
+
+  .empty{
+    min-height:240px !important;
+    height:auto !important;
+  }
+}
+
+/* Calendar badges should visually read as remaining unfinished tasks */
+.plan-count{
+  font-variant-numeric:tabular-nums;
+}
+
+.plan-count::after{
+  content:'';
+}
+
+
+/* ════════════════════════════════════════
+   FINAL BUTTON HIERARCHY
+   Black only for Add + selected calendar day
+════════════════════════════════════════ */
+
+/* Main action only */
+.btn-add{
+  background:#111110 !important;
+  color:#FFFFFF !important;
+  border-color:#111110 !important;
+  box-shadow:0 10px 22px rgba(17,17,16,.12) !important;
+}
+
+.btn-add:hover{
+  background:#000000 !important;
+  color:#FFFFFF !important;
+}
+
+[data-theme="dark"] .btn-add{
+  background:#F5F5F7 !important;
+  color:#111110 !important;
+  border-color:#F5F5F7 !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.38) !important;
+}
+
+/* Selected day in calendar stays the strong visual focus */
+.plan-day.selected{
+  background:#111110 !important;
+  color:#FFFFFF !important;
+  border-color:#111110 !important;
+  box-shadow:0 18px 34px rgba(17,17,16,.18) !important;
+}
+
+.plan-day.selected .plan-day-num,
+.plan-day.selected .plan-label{
+  color:#FFFFFF !important;
+}
+
+.plan-day.selected .plan-count{
+  background:#FFFFFF !important;
+  color:#111110 !important;
+}
+
+[data-theme="dark"] .plan-day.selected{
+  background:#F5F5F7 !important;
+  color:#111110 !important;
+  border-color:#F5F5F7 !important;
+  box-shadow:0 18px 34px rgba(0,0,0,.42) !important;
+}
+
+[data-theme="dark"] .plan-day.selected .plan-day-num,
+[data-theme="dark"] .plan-day.selected .plan-label{
+  color:#111110 !important;
+}
+
+[data-theme="dark"] .plan-day.selected .plan-count{
+  background:#111110 !important;
+  color:#FFFFFF !important;
+}
+
+/* Today + arrows become secondary controls */
+.planner-nav,
+.planner-today{
+  background:rgba(17,17,16,.06) !important;
+  color:#111110 !important;
+  border:1px solid rgba(17,17,16,.08) !important;
+  box-shadow:none !important;
+}
+
+.planner-nav:hover,
+.planner-today:hover{
+  background:rgba(17,17,16,.11) !important;
+  color:#111110 !important;
+  transform:translateY(-1px);
+}
+
+[data-theme="dark"] .planner-nav,
+[data-theme="dark"] .planner-today{
+  background:rgba(245,245,247,.08) !important;
+  color:#F5F5F7 !important;
+  border:1px solid rgba(245,245,247,.11) !important;
+  box-shadow:none !important;
+}
+
+[data-theme="dark"] .planner-nav:hover,
+[data-theme="dark"] .planner-today:hover{
+  background:rgba(245,245,247,.15) !important;
+  color:#FFFFFF !important;
+}
+
+/* Status pill is a quiet label, not a primary button */
+.panel-pill{
+  background:rgba(17,17,16,.07) !important;
+  color:#111110 !important;
+  border:1px solid rgba(17,17,16,.08) !important;
+  box-shadow:none !important;
+}
+
+[data-theme="dark"] .panel-pill{
+  background:rgba(245,245,247,.10) !important;
+  color:#F5F5F7 !important;
+  border:1px solid rgba(245,245,247,.11) !important;
+  box-shadow:none !important;
+}
+
+/* Keep past message readable */
+.input-lock{
+  opacity:1 !important;
+  background:#F3F0EA !important;
+  border:1px solid #DED8CE !important;
+  color:#4D4842 !important;
+  font-weight:650 !important;
+  line-height:1.55;
+}
+
+.input-lock::before{
+  content:'';
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#111110;
+  flex:0 0 auto;
+  opacity:.70;
+}
+
+[data-theme="dark"] .input-lock{
+  background:#2C2C2E !important;
+  border-color:#4A4A4D !important;
+  color:#E5E5EA !important;
+}
+
+[data-theme="dark"] .input-lock::before{
+  background:#F5F5F7;
+  opacity:.9;
+}
+
+/* Past days clearer in dark mode */
+[data-theme="dark"] .plan-day.past{
+  background:#202022 !important;
+  border-color:#38383B !important;
+  color:#B8B8BD !important;
+  opacity:.88 !important;
+}
+
+[data-theme="dark"] .plan-day.past .plan-day-num,
+[data-theme="dark"] .plan-day.past .plan-label{
+  color:#B8B8BD !important;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div class="splash" id="splash">
+  <div class="splash-bg"></div>
+
+  <div class="splash-content">
+    <div class="splash-appmark">
+      <div class="splash-glyph">
+        <span></span>
+      </div>
+    </div>
+
+    <h1 class="splash-title">My Tasks</h1>
+    <p class="splash-subtitle">Simple planning for every day</p>
+
+    <div class="splash-loader">
+      <span></span>
+    </div>
+  </div>
+</div>
+
+<!-- Theme toggle -->
+<button class="theme-btn" id="theme-btn" title="Toggle theme" aria-label="Toggle dark/light mode">
+  <svg id="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+  <svg id="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+</button>
+
+<div class="wrap">
+
+  <!-- Header -->
+  <header class="hd">
+    <div class="hd-row">
+      <h1>My Tasks</h1>
+
+      <!-- Date picker trigger -->
+      <div class="date-picker-wrap">
+        <button class="date-btn" id="date-btn" aria-haspopup="true" aria-expanded="false">
+          <svg class="date-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span class="date-btn-label" id="date-btn-label"></span>
+          <span class="date-btn-badge" id="date-btn-badge"></span>
+          <svg class="date-btn-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+
+        <!-- Calendar popover -->
+        <div class="cal-popover" id="cal-popover" role="dialog" aria-label="Pick a date">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="cal-month-label" id="cal-month"></span>
+            <button class="cal-nav-btn" id="cal-next" aria-label="Next month">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+
+          <div class="cal-wdays">
+            <span class="cal-wday">Su</span><span class="cal-wday">Mo</span>
+            <span class="cal-wday">Tu</span><span class="cal-wday">We</span>
+            <span class="cal-wday">Th</span><span class="cal-wday">Fr</span>
+            <span class="cal-wday">Sa</span>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+
+          <div class="cal-footer">
+            <span class="cal-sel-label" id="cal-sel-label"></span>
+            <button class="cal-today-btn" id="cal-today-btn">Jump to Today</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hd-sub" id="hd-sub"></p>
+  </header>
+
+  <main class="planner-layout">
+    <section class="planner" aria-label="Task calendar">
+      <div class="planner-head">
+        <div class="planner-title">
+          <span class="planner-kicker">Calendar</span>
+          <span class="planner-month" id="planner-month"></span>
+        </div>
+
+        <div class="planner-actions">
+          <button class="planner-nav" id="planner-prev" aria-label="Previous month">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <button class="planner-today" id="planner-today">Today</button>
+          <button class="planner-nav" id="planner-next" aria-label="Next month">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="planner-weekdays">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="planner-grid" id="planner-grid"></div>
+    </section>
+
+    <section class="day-panel" aria-label="Selected day tasks">
+      <div class="day-panel-head">
+        <div>
+          <span class="panel-kicker">Selected day</span>
+          <h2 id="panel-title">Today</h2>
+        </div>
+        <span class="panel-pill" id="panel-pill">Today</span>
+      </div>
+
+      <div class="prog" id="prog" style="display:none">
+        <div class="prog-top">
+          <span class="prog-label">Progress</span>
+          <span class="prog-frac" id="prog-frac"></span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      </div>
+
+      <div class="input-lock" id="input-lock">
+        <span>Past days are view-only. Select today or a future date to add tasks.</span>
+      </div>
+
+      <div class="input-card" id="input-card">
+        <svg class="ic-plus" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <input class="ti" id="ti" type="text" placeholder="Add a new task..." maxlength="200" autocomplete="off" spellcheck="false">
+        <button class="btn-add" id="btn-add">Add</button>
+      </div>
+
+      <div class="list" id="list"></div>
+
+      <footer class="ft">
+        <span class="ft-left" id="ft-left"></span>
+        <button class="btn-clear" id="btn-clear">Clear completed</button>
+      </footer>
+    </section>
+  </main>
+</div>
+<script>
+// ── Helpers ──────────────────────────────────────────────────────
+function toISO(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Theme ────────────────────────────────────────────────────────
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('tsks_theme', t);
+  document.getElementById('icon-moon').style.display = t === 'light' ? '' : 'none';
+  document.getElementById('icon-sun').style.display  = t === 'dark'  ? '' : 'none';
+}
+applyTheme(localStorage.getItem('tsks_theme') || 'light');
+document.getElementById('theme-btn').addEventListener('click', () => {
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+});
+
+// ── State ────────────────────────────────────────────────────────
+let tasks = JSON.parse(localStorage.getItem('tsks') || '[]');
+const todayISO = toISO(new Date());
+tasks.forEach(t => { if (!t.date) t.date = todayISO; });
+
+let selectedDate = todayISO;
+let calYear  = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let popoverOpen = false;
+
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAYS_S = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MOS    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+// ── Persist ──────────────────────────────────────────────────────
+function save() { localStorage.setItem('tsks', JSON.stringify(tasks)); }
+
+// ── Popover ──────────────────────────────────────────────────────
+const dateBtn    = document.getElementById('date-btn');
+const calPopover = document.getElementById('cal-popover');
+
+function openPopover() {
+  popoverOpen = true;
+  dateBtn.classList.add('open');
+  dateBtn.setAttribute('aria-expanded', 'true');
+  calPopover.classList.add('visible');
+}
+function closePopover() {
+  popoverOpen = false;
+  dateBtn.classList.remove('open');
+  dateBtn.setAttribute('aria-expanded', 'false');
+  calPopover.classList.remove('visible');
+}
+
+dateBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  popoverOpen ? closePopover() : openPopover();
+});
+
+document.addEventListener('click', e => {
+  if (popoverOpen && !calPopover.contains(e.target) && e.target !== dateBtn) closePopover();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && popoverOpen) closePopover(); });
+
+// ── Calendar ─────────────────────────────────────────────────────
+
+function isPastDate(iso) {
+  return new Date(iso + 'T00:00:00') < new Date(todayISO + 'T00:00:00');
+}
+
+function selectDate(iso, year, month) {
+  selectedDate = iso;
+  calYear = year;
+  calMonth = month;
+  renderCal();
+  renderPlannerCalendar();
+  updateDateBtn();
+  renderHeader();
+  render();
+}
+
+function renderPlannerCalendar() {
+  const monthLabel = document.getElementById('planner-month');
+  const grid = document.getElementById('planner-grid');
+  if (!monthLabel || !grid) return;
+
+  monthLabel.textContent = MONTHS[calMonth] + ' ' + calYear;
+  grid.innerHTML = '';
+
+  const firstDay    = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+
+  const cells = [];
+  for (let i = firstDay - 1; i >= 0; i--)
+    cells.push({ d: daysInPrev - i, m: calMonth - 1, y: calYear, other: true });
+  for (let d = 1; d <= daysInMonth; d++)
+    cells.push({ d, m: calMonth, y: calYear, other: false });
+  while (cells.length < 42)
+    cells.push({ d: cells.length - firstDay - daysInMonth + 1, m: calMonth + 1, y: calYear, other: true });
+
+  cells.forEach(cell => {
+    const realM = ((cell.m % 12) + 12) % 12;
+    const realY = cell.y + Math.floor(cell.m / 12);
+    const iso   = realY + '-' + String(realM + 1).padStart(2, '0') + '-' + String(cell.d).padStart(2, '0');
+    const count = tasks.filter(t => t.date === iso && !t.d).length;
+
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'plan-day' +
+      (cell.other ? ' other' : '') +
+      (isPastDate(iso) ? ' past' : '') +
+      (iso === todayISO ? ' today' : '') +
+      (iso === selectedDate ? ' selected' : '');
+
+    el.innerHTML = `
+      <span class="plan-day-num">${cell.d}</span>
+      <span class="plan-day-meta">
+        ${count ? `<span class="plan-count">${count}</span>` : '<span></span>'}
+        <span class="plan-label"></span>
+      </span>`;
+
+    el.addEventListener('click', () => selectDate(iso, realY, realM));
+    grid.appendChild(el);
+  });
+}
+
+function updateInputLock() {
+  const inputCard = document.getElementById('input-card');
+  const inputLock = document.getElementById('input-lock');
+  const taskInput = document.getElementById('ti');
+  const addBtn = document.getElementById('btn-add');
+  const locked = isPastDate(selectedDate);
+
+  if (!inputCard || !inputLock || !taskInput || !addBtn) return;
+
+  inputCard.classList.toggle('locked', locked);
+  inputLock.classList.toggle('visible', locked);
+  taskInput.disabled = locked;
+  addBtn.disabled = locked;
+  taskInput.placeholder = locked ? 'Past days are view-only' : 'Add a new task...';
+}
+
+function renderCal() {
+  document.getElementById('cal-month').textContent = MONTHS[calMonth] + ' ' + calYear;
+
+  const firstDay    = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+
+  const cells = [];
+  for (let i = firstDay - 1; i >= 0; i--)
+    cells.push({ d: daysInPrev - i, m: calMonth - 1, y: calYear, other: true });
+  for (let d = 1; d <= daysInMonth; d++)
+    cells.push({ d, m: calMonth, y: calYear, other: false });
+  while (cells.length < 42)
+    cells.push({ d: cells.length - firstDay - daysInMonth + 1, m: calMonth + 1, y: calYear, other: true });
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  cells.forEach(cell => {
+    const realM = ((cell.m % 12) + 12) % 12;
+    const realY = cell.y + Math.floor(cell.m / 12);
+    const iso   = realY + '-' + String(realM + 1).padStart(2, '0') + '-' + String(cell.d).padStart(2, '0');
+    const count = tasks.filter(t => t.date === iso && !t.d).length;
+
+    const el = document.createElement('div');
+    el.className = 'cal-day' +
+      (cell.other      ? ' other-month' : '') +
+      (iso === todayISO   ? ' today'    : '') +
+      (iso === selectedDate ? ' selected' : '');
+    el.innerHTML = `<span>${cell.d}</span>${count ? '<span class="cal-dot"></span>' : ''}`;
+    el.title = iso + (count ? ` · ${count} task${count > 1 ? 's' : ''}` : '');
+
+    el.addEventListener('click', () => {
+      selectDate(iso, realY, realM);
+      closePopover();
+    });
+    grid.appendChild(el);
+  });
+
+  // selected label in footer
+  const sel = new Date(selectedDate + 'T12:00:00');
+  document.getElementById('cal-sel-label').textContent =
+    DAYS_S[sel.getDay()] + ', ' + MOS[sel.getMonth()] + ' ' + sel.getDate();
+}
+
+document.getElementById('cal-prev').addEventListener('click', e => {
+  e.stopPropagation();
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCal();
+  renderPlannerCalendar();
+});
+document.getElementById('cal-next').addEventListener('click', e => {
+  e.stopPropagation();
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCal();
+  renderPlannerCalendar();
+});
+document.getElementById('cal-today-btn').addEventListener('click', e => {
+  e.stopPropagation();
+  const now = new Date();
+  selectDate(todayISO, now.getFullYear(), now.getMonth());
+  closePopover();
+});
+
+
+document.getElementById('planner-prev').addEventListener('click', () => {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCal();
+  renderPlannerCalendar();
+});
+
+document.getElementById('planner-next').addEventListener('click', () => {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCal();
+  renderPlannerCalendar();
+});
+
+document.getElementById('planner-today').addEventListener('click', () => {
+  const now = new Date();
+  selectDate(todayISO, now.getFullYear(), now.getMonth());
+});
+
+document.addEventListener('keydown', e => {
+  if (e.target && ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+  if (e.key === 'ArrowLeft') {
+    const d = new Date(selectedDate + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    selectDate(toISO(d), d.getFullYear(), d.getMonth());
+  }
+  if (e.key === 'ArrowRight') {
+    const d = new Date(selectedDate + 'T12:00:00');
+    d.setDate(d.getDate() + 1);
+    selectDate(toISO(d), d.getFullYear(), d.getMonth());
+  }
+});
+
+// ── Date button label ────────────────────────────────────────────
+function updateDateBtn() {
+  const d     = new Date(selectedDate + 'T12:00:00');
+  const isToday = selectedDate === todayISO;
+  const label = DAYS_S[d.getDay()] + ', ' + MOS[d.getMonth()] + ' ' + d.getDate();
+
+  document.getElementById('date-btn-label').textContent = label;
+  const badge = document.getElementById('date-btn-badge');
+  if (isToday) {
+    badge.textContent = 'Today';
+    badge.style.display = '';
+  } else {
+    const diff = Math.round((new Date(selectedDate) - new Date(todayISO)) / 86400000);
+    if (diff === 1)       { badge.textContent = 'Tomorrow'; badge.style.display = ''; }
+    else if (diff === -1) { badge.textContent = 'Yesterday'; badge.style.display = ''; }
+    else                  { badge.style.display = 'none'; }
+  }
+}
+
+
+function updateDayPanel() {
+  const title = document.getElementById('panel-title');
+  const pill = document.getElementById('panel-pill');
+  if (!title || !pill) return;
+
+  const d = new Date(selectedDate + 'T12:00:00');
+  const diff = Math.round((new Date(selectedDate) - new Date(todayISO)) / 86400000);
+  const label = DAYS[d.getDay()] + ', ' + MOS[d.getMonth()] + ' ' + d.getDate();
+
+  title.textContent = label;
+  if (diff === 0) pill.textContent = 'Today';
+  else if (diff === 1) pill.textContent = 'Tomorrow';
+  else if (diff === -1) pill.textContent = 'Yesterday';
+  else if (diff < 0) pill.textContent = 'Past';
+  else pill.textContent = 'Upcoming';
+}
+
+// ── Header ───────────────────────────────────────────────────────
+function renderHeader() {
+  const h = new Date().getHours();
+  if (selectedDate === todayISO) {
+    document.getElementById('hd-sub').textContent =
+      h < 12 ? 'Good morning.' : h < 17 ? 'Good afternoon.' : 'Good evening.';
+  } else {
+    const diff = Math.round((new Date(selectedDate) - new Date(todayISO)) / 86400000);
+    const d = new Date(selectedDate + 'T12:00:00');
+    const dayLabel = DAYS[d.getDay()] + ', ' + MOS[d.getMonth()] + ' ' + d.getDate();
+    document.getElementById('hd-sub').textContent =
+      diff < 0 ? 'Past — ' + dayLabel : 'Upcoming — ' + dayLabel;
+  }
+}
+
+// ── Render ───────────────────────────────────────────────────────
+function render() {
+  updateInputLock();
+  updateDayPanel();
+  renderPlannerCalendar();
+
+  const dayTasks = tasks.filter(t => t.date === selectedDate);
+  const total    = dayTasks.length;
+  const doneN    = dayTasks.filter(t => t.d).length;
+  const activeN  = total - doneN;
+
+  const prog = document.getElementById('prog');
+  if (total > 0) {
+    prog.style.display = '';
+    document.getElementById('prog-fill').style.width = Math.round(doneN / total * 100) + '%';
+    document.getElementById('prog-frac').textContent  = doneN + ' of ' + total;
+  } else {
+    prog.style.display = 'none';
+  }
+
+  document.getElementById('ft-left').innerHTML = '<b>' + activeN + '</b> task' + (activeN !== 1 ? 's' : '') + ' remaining';
+  document.getElementById('btn-clear').disabled = doneN === 0;
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+
+  if (!dayTasks.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <rect x="3" y="4" width="18" height="17" rx="3"/>
+          <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="empty-h">${selectedDate > todayISO ? 'Nothing planned yet' : 'Nothing here yet'}</p>
+        <p class="empty-p">Add your first task for this day.</p>
+      </div>`;
+    return;
+  }
+
+  const pending  = dayTasks.filter(t => !t.d);
+  const finished = dayTasks.filter(t =>  t.d);
+  pending.forEach(t => list.appendChild(mkItem(t)));
+  if (pending.length && finished.length) {
+    const d = document.createElement('div');
+    d.className = 'divider';
+    d.innerHTML = '<div class="divider-line"></div><span class="divider-tag">Completed</span><div class="divider-line"></div>';
+    list.appendChild(d);
+  }
+  finished.forEach(t => list.appendChild(mkItem(t)));
+}
+
+function mkItem(task) {
+  const el = document.createElement('div');
+  el.className = 'item' + (task.d ? ' done' : '');
+  el.innerHTML = `
+    <label class="cb-wrap">
+      <input type="checkbox" ${task.d ? 'checked' : ''}>
+      <span class="cb-face"></span>
+    </label>
+    <span class="tx">${esc(task.t)}</span>
+    <div class="item-actions">
+      <button class="act-btn edit" title="Edit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
+      <button class="act-btn del" title="Delete">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>`;
+
+  const checkbox = el.querySelector('input');
+  
+  // Toggle checkbox when clicking the task or text (not action buttons)
+  el.addEventListener('click', (e) => {
+    // Don't toggle if clicking edit/delete buttons
+    if (e.target.closest('.item-actions')) return;
+    checkbox.checked = !checkbox.checked;
+    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  checkbox.addEventListener('change', e => {
+    const t = tasks.find(x => x.id === task.id);
+    if (t) { t.d = e.target.checked; save(); render(); renderCal(); }
+  });
+  el.querySelector('.edit').addEventListener('click', () => startEdit(el, task));
+  el.querySelector('.del').addEventListener('click', () => {
+    el.classList.add('bye');
+    el.addEventListener('animationend', () => {
+      tasks = tasks.filter(x => x.id !== task.id);
+      save(); render(); renderCal();
+    }, { once: true });
+  });
+  return el;
+}
+
+function startEdit(el, task) {
+  el.classList.add('editing');
+  const txEl  = el.querySelector('.tx');
+  const actEl = el.querySelector('.item-actions');
+
+  const input = document.createElement('input');
+  input.className = 'edit-input'; input.type = 'text'; input.value = task.t;
+  input.maxLength = 200; input.autocomplete = 'off'; input.spellcheck = false;
+  txEl.replaceWith(input);
+  input.focus(); input.select();
+
+  actEl.innerHTML = `
+    <button class="act-btn save" title="Save (Enter)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+    <button class="act-btn cancel" title="Cancel (Esc)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>`;
+
+  const commit = () => {
+    const val = input.value.trim();
+    if (val && val !== task.t) { const t = tasks.find(x => x.id === task.id); if (t) { t.t = val; save(); } }
+    render();
+  };
+  actEl.querySelector('.save').addEventListener('click', commit);
+  actEl.querySelector('.cancel').addEventListener('click', render);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.preventDefault(); commit(); }
+    if (e.key === 'Escape') { e.preventDefault(); render(); }
+  });
+}
+
+// ── Add ──────────────────────────────────────────────────────────
+function add() {
+  if (isPastDate(selectedDate)) return;
+  const v = document.getElementById('ti').value.trim();
+  if (!v) { document.getElementById('ti').focus(); return; }
+  tasks.unshift({ id: Date.now().toString(36), t: v, d: false, date: selectedDate });
+  save(); render(); renderCal();
+  document.getElementById('ti').value = '';
+  document.getElementById('ti').focus();
+}
+
+document.getElementById('btn-add').addEventListener('click', add);
+document.getElementById('ti').addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
+document.getElementById('btn-clear').addEventListener('click', () => {
+  tasks = tasks.filter(t => !(t.d && t.date === selectedDate));
+  save(); render(); renderCal();
+});
+
+// ── Init ─────────────────────────────────────────────────────────
+updateDateBtn();
+renderHeader();
+renderCal();
+renderPlannerCalendar();
+render();
+
+// Hide splash screen with elegant opening animation
+setTimeout(() => {
+  const splash = document.getElementById('splash');
+  if (splash) {
+    splash.classList.add('hidden');
+  }
+}, 1600);
+</script>
+</body>
+</html>
