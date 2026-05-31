@@ -12,7 +12,6 @@ The app lets users select a day from the calendar, add tasks, mark them as compl
 - Remaining task count displayed on each calendar day
 - Internal scrolling for long task lists
 - Light and dark mode
-- Apple-inspired minimal UI
 - Data saved locally using `localStorage`
 - Fully responsive design
 
