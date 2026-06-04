@@ -1,7 +1,6 @@
 # My Tasks Calendar
 
-A clean and minimal calendar-based task planner built with HTML, CSS, and JavaScript.  
-The app lets users select a day from the calendar, add tasks, mark them as completed, and track remaining tasks directly from the calendar.
+A clean, minimal calendar-based task planner built with vanilla HTML, CSS, and JavaScript. Select a day, add your tasks, mark them complete, and keep track of what's left — all from a single, distraction-free calendar view.
 
 ## Features
 
@@ -12,51 +11,33 @@ The app lets users select a day from the calendar, add tasks, mark them as compl
 - Remaining task count displayed on each calendar day
 - Internal scrolling for long task lists
 - Light and dark mode
+- Apple-inspired minimal UI
 - Data saved locally using `localStorage`
 - Fully responsive design
 
-## Technologies Used
+## Tech Stack
 
 - HTML5
 - CSS3
-- JavaScript
+- JavaScript (ES6)
 - LocalStorage
 
-## How to Run
+## Getting Started
 
-Open the `index.html` file directly in your browser.
+No build step, installation, or backend required. Simply open the app in your browser:
 
 ```bash
 index.html
 ```
 
-No installation or backend is required.
-
 ## Project Structure
 
-```bash
+```
 .
 ├── index.html
 └── README.md
 ```
 
-## GitHub Pages Deployment
+## Data & Privacy
 
-You can publish this project as an interactive website using GitHub Pages.
-
-Steps:
-
-1. Create a new GitHub repository.
-2. Upload `index.html` and `README.md`.
-3. Go to repository **Settings**.
-4. Open **Pages**.
-5. Under **Build and deployment**, choose:
-   - Source: `Deploy from a branch`
-   - Branch: `main`
-   - Folder: `/root`
-6. Save the settings.
-7. GitHub will generate a live website link for the project.
-
-## Notes
-
-This project stores tasks in the browser using `localStorage`, so the saved tasks are kept on the same browser and device only.
+Tasks are saved in the browser using `localStorage`, which means your data stays on the same browser and device. Nothing is sent to a server.
